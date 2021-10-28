@@ -11,7 +11,6 @@ typedef long long LL;
 /*
 #define cin in
 #define cout out
-
 ifstream in(".in");
 ofstream out(".out");
 */
@@ -28,31 +27,114 @@ const LL INF64 = 3e18 + 1;
 const double eps = 1e-14;
 const double PI = acos(-1);
 
+// Data structure to store a binary tree node
+struct Node
+{
+    char data;
+    Node *left, *right;
+
+    Node(char data)
+    {
+        this->data = data;
+        this->left = this->right = nullptr;
+    }
+};
+
+struct Trunk
+{
+    Trunk *prev;
+    string str;
+
+    Trunk(Trunk *prev, string str)
+    {
+        this->prev = prev;
+        this->str = str;
+    }
+};
+
+// Helper function to print branches of the binary tree
+void showTrunks(Trunk *p)
+{
+    if (p == nullptr) {
+        return;
+    }
+
+    showTrunks(p->prev);
+    cout << p->str;
+}
+
+// Recursive function to print a binary tree.
+// It uses the inorder traversal.
+void printTree(Node* root, Trunk *prev, bool isLeft)
+{
+    if (root == nullptr) {
+        return;
+    }
+
+    string prev_str = "    ";
+    Trunk *trunk = new Trunk(prev, prev_str);
+
+    printTree(root->right, trunk, true);
+
+    if (!prev) {
+        trunk->str = "---";
+    }
+    else if (isLeft)
+    {
+        trunk->str = ".---";
+        prev_str = "   |";
+    }
+    else {
+        trunk->str = "`---";
+        prev->str = prev_str;
+    }
+
+    showTrunks(trunk);
+    cout << root->data << endl;
+
+    if (prev) {
+        prev->str = prev_str;
+    }
+    trunk->str = "   |";
+
+    printTree(root->left, trunk, false);
+}
+
 int n, m;
 string s;
-set<char> O;
+set<char> O, op;
 
-int rec(string s, int l, int r){
+Node* root;
+int frst = 1;
+
+int rec(Node* &root, string s, int l, int r){
 
     if(l == r){
-        if(s[l] >= 'A' && s[l] <= 'Z')return 1;
+        if(s[l] >= 'A' && s[l] <= 'Z'){
+            root = new Node(s[l]);
+            return 1;
+        }
         return 0;
     }
     if(s[l] != '(' || s[r] != ')'){
         return 0;
     }
-    if((O.find(s[l + 1]) != O.end()) && (s[l + 1] != '?') && (s[r - 1] >= 'A') && (s[r - 1] <= 'Z') && (r - l + 1 == 4)){
+    if((O.find(s[l + 1]) != O.end()) && (op.find(s[l + 1]) == op.end()) && (s[r - 1] >= 'A') && (s[r - 1] <= 'Z') && (r - l + 1 == 4)){
+        root = new Node('n');
+        root->left = new Node(s[r - 1]);
         return 1;
     }
-    if((O.find(s[l + 1]) != O.end()) && (s[l + 1] != '?')){
-        return rec(s, l + 2, r - 1);
+    if((O.find(s[l + 1]) != O.end()) && (op.find(s[l + 1]) == op.end())){
+        root = new Node('n');
+        return rec(root->left, s, l + 2, r - 1);
     }
     int now = 0;
     for(int i = l + 1; i < r; i++){
         if(s[i] == '(')now++;
         if(s[i] == ')')now--;
         if((O.find(s[i]) != O.end()) && !now){
-            return (rec(s, l + 1, i - 1) && rec(s, i + 1, r - 1));
+            root = new Node('r');
+            return (rec(root->left, s, l + 1, i - 1) && rec(root->right, s, i + 1, r - 1));
         }
     }
     return 0;
@@ -63,22 +145,33 @@ void solve(){
     string g;
     getline(cin, g);
 
+    cout << "Introduceti semnul negatiei : " << endl;
+    string c;
+    cin >> c;
+
     for(auto it : g){
         if(it == ' ')continue;
         s += it;
     }
 
+
     for(auto it : s){
         if(it == ' ' || it == ')' || it == '(')continue;
         if((it >= 'A') && (it <= 'Z'))continue;
         O.insert(it);
+        if(it == c[0])continue;
+        op.insert(it);
     }
 
     n = sz(s);
     s = '.' + s;
 
-    if(rec(s, 1, n)){
+    if(rec(root, s, 1, n)){
         cout << "Este o formula propozitionala" << '\n';
+        // print constructed binary tree
+        printTree(root, nullptr, false);
+        cout << " r - conector binar" << endl;
+        cout << " n - negatie" << endl;
         return;
     }
 
