@@ -142,6 +142,8 @@ int rec(Node* &root, string s, int l, int r){
 
 void solve(){
 
+    cout << "Introduceti expresia : " << endl;
+
     string g;
     getline(cin, g);
 
