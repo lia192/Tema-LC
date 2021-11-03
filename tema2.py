@@ -337,6 +337,9 @@ cnt = len(litere)
 
 ans = da(s, 0, len(s) - 1)
 
+exista_true = 0
+exista_false = 0
+
 if ans == 1:
     print("Forma in sintaxa stricta : ", s)
     b = rec(s, 0, len(s) - 1)
@@ -370,10 +373,21 @@ if ans == 1:
         print("", end=" | ")
         for it in cur:
             print(it, end=" | ")
-        print(val(g, 0, len(g) - 1))
+        nw = val(g, 0, len(g) - 1)
+        exista_true = max(exista_true, nw == 1)
+        exista_false = max(exista_false, nw == 1)
+        print(nw)
+    if exista_true == 1:
+        print("Formula este satisfiabila")
+    else:
+        print("Formula este nesatisfiabila")
+    if exista_false == 0:
+        print("Formula este valida")
+    else:
+        print("Formula este invalida")
 else:
     print("Nu este o propozitie bine formata in sintaxa relaxata")
-    #print(s)
+    # print(s)
 
 
 # print(ans)
