@@ -28,4 +28,6 @@ Programul adauga parantezele necesare expresiei si apoi evalueaza daca este o pr
         -afiseaza forma acesteia in sintaxa stricta
         -afiseaza arborele abstract corepunzator
         -afiseaza tabelul de adevar corespunzator
+        -determina daca formula este satisfiabila sau nesatisfiabila
+        -determina daca formula este valida sau invalida
     2) daca nu este o propozitie bine formata in sintaxa stricta anunta acest lucru
