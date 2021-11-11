@@ -1,29 +1,28 @@
+tabel = []
+
+
 def strict_structure(s):
 
     # propozitie atomica
     if len(s) == 1 and s[0] >= "A" and s[0] <= "Z":
         return s
 
-    # negatie
-    if s[0] == "¬":
-        ans = ""
-        for i in range(1, len(s)):
-            ans += s[i]
-        return "(¬" + strict_structure(ans) + ")"
-
-    # negatie cu paranteze
-    if s[0] == "(" and s[1] == "¬" and s[len(s) - 1] == ")":
-        ans = ""
-        for i in range(2, len(s) - 1):
-            ans += s[i]
-        return "(¬" + strict_structure(ans) + ")"
-
     # initializare
     open = 0
     closed = 0
+    x = 0
+    good = 1
     st = 0
     dr = len(s) - 1
-    if s[dr] == ")" and s[st] == "(":
+    for i in range(len(s)):
+        it = s[i]
+        if it == "(":
+            x += 1
+        if it == ")":
+            x -= 1
+        if x == 0 and i > 0 and i < len(s) - 1:
+            good = 0
+    if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
     cur = ""  # componenta
@@ -60,9 +59,19 @@ def strict_structure(s):
     # initializare
     open = 0
     closed = 0
+    x = 0
+    good = 1
     st = 0
     dr = len(s) - 1
-    if s[dr] == ")" and s[st] == "(":
+    for i in range(len(s)):
+        it = s[i]
+        if it == "(":
+            x += 1
+        if it == ")":
+            x -= 1
+        if x == 0 and i > 0 and i < len(s) - 1:
+            good = 0
+    if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
     cur = ""  # componenta
@@ -99,9 +108,19 @@ def strict_structure(s):
     # initializare
     open = 0
     closed = 0
+    x = 0
+    good = 1
     st = 0
     dr = len(s) - 1
-    if s[dr] == ")" and s[st] == "(":
+    for i in range(len(s)):
+        it = s[i]
+        if it == "(":
+            x += 1
+        if it == ")":
+            x -= 1
+        if x == 0 and i > 0 and i < len(s) - 1:
+            good = 0
+    if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
     cur = ""  # componenta
@@ -137,6 +156,20 @@ def strict_structure(s):
             ans = "(" + strict_structure(l[i]) + l1[i] + ans
 
         return ans
+    # negatie
+    if s[0] == "¬":
+        ans = ""
+        for i in range(1, len(s)):
+            ans += s[i]
+        return "(¬" + strict_structure(ans) + ")"
+
+    # negatie cu paranteze
+    if s[0] == "(" and s[1] == "¬" and s[len(s) - 1] == ")":
+        ans = ""
+        for i in range(2, len(s) - 1):
+            ans += s[i]
+        return "(¬" + strict_structure(ans) + ")"
+
     return s
 
 
@@ -258,6 +291,7 @@ def da(s, l, r):
 
     if l == r:
         if s[l] >= "A" and s[l] <= "Z":
+            # tabel.append(s[l : r + 1])
             return 1
         return 0
 
@@ -270,9 +304,11 @@ def da(s, l, r):
         and (s[r - 1] <= "Z")
         and (r - l + 1 == 4)
     ):
+        tabel.append(s[l : r + 1])
         return 1
 
     if s[l + 1] == "¬":
+        tabel.append(s[l : r + 1])
         return da(s, l + 2, r - 1)
 
     now = 0
@@ -282,6 +318,7 @@ def da(s, l, r):
         if s[i] == ")":
             now -= 1
         if (s[i] == "⇒" or s[i] == "⇔" or s[i] == "∨" or s[i] == "∧") and now == 0:
+            tabel.append(s[l : r + 1])
             return da(s, l + 1, i - 1) and da(s, i + 1, r - 1)
     return 0
 
@@ -308,14 +345,14 @@ def val(s, l, r):
             now += 1
         if s[i] == ")":
             now -= 1
-        if s[i] == "→" and now == 0:
+        if s[i] == "⇒" and now == 0:
             return (1 - val(s, l + 1, i - 1)) or val(s, i + 1, r - 1)
         if s[i] == "⇔" and now == 0:
-            return val(s, l + 1, i - 1) == val(s, i + 1, r - 1)
+            return 1 - (1 - (val(s, l + 1, i - 1) == val(s, i + 1, r - 1)))
         if s[i] == "∨" and now == 0:
-            return val(s, l + 1, i - 1) or val(s, i + 1, r - 1)
+            return 1 - (1 - (val(s, l + 1, i - 1) or val(s, i + 1, r - 1)))
         if s[i] == "∧" and now == 0:
-            return val(s, l + 1, i - 1) and val(s, i + 1, r - 1)
+            return 1 - (1 - (val(s, l + 1, i - 1) and val(s, i + 1, r - 1)))
     return 0
 
 
@@ -326,6 +363,7 @@ for it in s:
         k += it
 
 s = strict_structure(k)
+# print(s)
 
 litere = set()
 d = dict()
@@ -340,6 +378,8 @@ ans = da(s, 0, len(s) - 1)
 exista_true = 0
 exista_false = 0
 
+spatii = "                                                                "
+
 if ans == 1:
     print("Forma in sintaxa stricta : ", s)
     b = rec(s, 0, len(s) - 1)
@@ -348,7 +388,12 @@ if ans == 1:
     print("", end=" | ")
     for it in litere:
         print(it, end=" | ")
-    print(s)
+
+    tabel = list(sorted(tabel, key=len))
+    for it in tabel:
+        print(it, end=" | ")
+    print()
+
     # generating the truth table
     for i in range(2 ** cnt):
         cur = ""
@@ -363,20 +408,24 @@ if ans == 1:
             d[it] = cur[x]
             x += 1
 
-        g = ""
-        for it in s:
-            if it >= "A" and it <= "Z":
-                g += d[it]
-            else:
-                g += it
-        # printing the line in the truth table
         print("", end=" | ")
         for it in cur:
             print(it, end=" | ")
-        nw = val(g, 0, len(g) - 1)
-        exista_true = max(exista_true, nw == 1)
-        exista_false = max(exista_false, nw == 1)
-        print(nw)
+
+        for now in tabel:
+            g = ""
+            for it in now:
+                if it >= "A" and it <= "Z":
+                    g += d[it]
+                else:
+                    g += it
+
+            nw = val(g, 0, len(g) - 1)
+            if len(g) == len(s):
+                exista_true = max(exista_true, nw == 1)
+                exista_false = max(exista_false, nw == 0)
+            print(spatii[0 : max(0, len(now) - 2)], nw, end=" | ")
+        print()
     if exista_true == 1:
         print("Formula este satisfiabila")
     else:
@@ -385,17 +434,8 @@ if ans == 1:
         print("Formula este valida")
     else:
         print("Formula este invalida")
+
+    #print(tabel)
 else:
     print("Nu este o propozitie bine formata in sintaxa relaxata")
     # print(s)
-
-
-# print(ans)
-
-# // (((P⇒Q)∨S)⇔T)
-# // (A^B)
-# // P⇒Q∧S⇒T
-# // (¬(B(¬Q))∧R)
-# // (P∧((¬Q)∧(¬(¬(Q⇔(¬R))))))
-# // ((P∨Q)⇒¬(P∨Q))∧(P∨(¬(¬Q)))
-# // (P⇒((Q∧A)⇒(S⇒T)))
