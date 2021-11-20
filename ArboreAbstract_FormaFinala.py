@@ -353,6 +353,11 @@ spatii = "                                                                "
 for i in range(len(s)):
     if s[i] == "(":
 
+        if now.key != "„F”":
+            print("Se astepta un operator")
+            print("Nu este propozitie bine formata")
+            exit()
+
         B = copy.deepcopy(a)
         C = copy.deepcopy(a)
 
@@ -520,4 +525,3 @@ if exista_false == 0:
     print("Formula este valida")
 else:
     print("Formula este invalida")
-
