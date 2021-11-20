@@ -328,7 +328,7 @@ s = strict_structure(k)
 
 print("Propoziia in forma stricta: ", s)
 
-a = BstNode("„□”")
+a = BstNode("„F”")
 now = a
 
 ans = ""
@@ -408,8 +408,10 @@ for i in range(len(s)):
             print("Nu este propozitie bine formata")
             exit()
         now.key = s[i]
-        now = p[now]
-        pos.pop()
+        if now != a:
+            now = p[now]
+        if len(pos) > 0:
+            pos.pop()
         print(
             "Propozitia atomica închide ramura arborelui, mutăm poziţia la nivelul părintelui."
         )
@@ -518,3 +520,4 @@ if exista_false == 0:
     print("Formula este valida")
 else:
     print("Formula este invalida")
+
