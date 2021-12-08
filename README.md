@@ -12,3 +12,8 @@ ArboreAbstract_FormaFinala.py:
   -converts the logical expression from relaxed syntax to strict syntax
   -chekcs whether the inserted logical expression is valid
   -simplifies the logical expression using the laws of reduction, comutativity, associativity, idempotency, anihilation, distributivity and absortion
+  
+  QuineMcCluskey+Petricksalgorithmforminimizi.py:
+   -converts the logical expression from relaxed syntax to strict syntax
+   -chekcs whether the inserted logical expression is valid
+   -simplifies the logical expression using the Quine-McCluskey algorithm using Petrick's method
