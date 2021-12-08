@@ -674,7 +674,7 @@ s = strict_structure(s)
 
 ans = da(s, 0, len(s) - 1)
 if not ans:
-    print("Nu este formula propozitionala bine formata")
+    print("Not a valid logical expression")
     exit()
 
 
