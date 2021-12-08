@@ -116,7 +116,6 @@ def da(s, l, r):
 
     if l == r:
         if s[l] >= "A" and s[l] <= "Z":
-            # tabel.append(s[l : r + 1])
             return 1
         return 0
 
@@ -129,11 +128,9 @@ def da(s, l, r):
         and (s[r - 1] <= "Z")
         and (r - l + 1 == 4)
     ):
-        tabel.append(s[l : r + 1])
         return 1
 
     if s[l + 1] == "¬":
-        tabel.append(s[l : r + 1])
         return da(s, l + 2, r - 1)
 
     now = 0
@@ -143,7 +140,6 @@ def da(s, l, r):
         if s[i] == ")":
             now -= 1
         if (s[i] == "⇒" or s[i] == "⇔" or s[i] == "∨" or s[i] == "∧") and now == 0:
-            tabel.append(s[l : r + 1])
             return da(s, l + 1, i - 1) and da(s, i + 1, r - 1)
     return 0
 
@@ -674,7 +670,7 @@ s = strict_structure(s)
 
 ans = da(s, 0, len(s) - 1)
 if not ans:
-    print("Not a valid logical expression")
+    print("Nu este formula propozitionala bine formata")
     exit()
 
 
@@ -733,6 +729,8 @@ for i in range(len(componente)):
             util[j] = 0
 
 componente = [componente[i] for i in range(len(componente)) if util[i]]
+if len(componente) == 0:
+    componente.append("⊥")
 l.append("∨".join(componente))
 
 # anihilare
@@ -753,6 +751,8 @@ for i in range(len(componente)):
             util[i] = 0
 
 componente = [componente[i] for i in range(len(componente)) if util[i]]
+if len(componente) == 0:
+    componente.append("⊥")
 l.append("∨".join(componente))
 
 
@@ -874,6 +874,8 @@ def findVariables(
             var_list.append("¬" + letter[i])
         elif x[i] == "1":
             var_list.append(letter[i])
+    if len(var_list) == 0:
+        return "T"
     if len(var_list) == 1:
         return "".join(var_list)
     return "(" + "∧".join(var_list) + ")"
@@ -882,24 +884,37 @@ def findVariables(
 nr_factor_comun = 0
 while 1:
 
+    if componente[0] == "⊥":
+        break
+
     # tranforming in binary representation
     formele_binare = []
     for it in componente:
         formele_binare.append(binary(it))
 
+    print("new s ", new_s)
     new_s = factor_comun(formele_binare)  ##simpyfind by common factor + anihilation
     for i in range(len(new_s)):
         new_s[i] = findVariables(new_s[i])  ##transforming from binary to letters
 
+    if len(new_s) == 0:
+        new_s.append("⊥")
+
     if set(new_s) == set(componente):
         break
+
     componente = new_s
+    if len(componente) == 0:
+        componente.append("⊥")
+
     l.append("∨".join(componente))
     nr_factor_comun += 1
 
 nr_idempotenta_2 = 0
 while 1:
 
+    if componente[0] == "⊥":
+        break
     # tranforming in binary representation
     formele_binare = []
     for it in componente:
