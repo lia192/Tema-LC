@@ -661,7 +661,7 @@ def idempotenta(s):
 # b = rec(s, 0, len(s) - 1)
 # b.display()
 
-s = "(¬P ∨ Q ∨ R) ∧ (P ∨ ¬R) ∧ (¬Q ∨ ¬R) ∧ ¬(P ∧ R)"
+s = "(¬A ∨ A) ∨ ( (P ∨ ¬R) ∧ (¬Q ∨ ¬R) ∧ ¬(P ∧ R) )"
 print("Insert expression : ", end="")
 s = input()
 s = s.split()
@@ -892,7 +892,6 @@ while 1:
     for it in componente:
         formele_binare.append(binary(it))
 
-    print("new s ", new_s)
     new_s = factor_comun(formele_binare)  ##simpyfind by common factor + anihilation
     for i in range(len(new_s)):
         new_s[i] = findVariables(new_s[i])  ##transforming from binary to letters
@@ -930,6 +929,12 @@ while 1:
     l.append("∨".join(componente))
     nr_idempotenta_2 += 1
 
+tautologie = 0
+for it in l[K + nr_factor_comun + 6 + nr_idempotenta_2]:
+    if it == "T" and len(l[K + nr_factor_comun + 6 + nr_idempotenta_2]) != 1:
+        tautologie = 1
+        l.append("T")
+
 print()
 print()
 print()
@@ -950,11 +955,15 @@ for i in range(nr_factor_comun):
 for i in range(nr_idempotenta_2):
     print(l[K + nr_factor_comun + 6 + i], " ∼ (Idempotency)")
 
-print(l[K + nr_factor_comun + 6 + nr_idempotenta_2])
+if tautologie:
+    print(l[K + nr_factor_comun + 6 + nr_idempotenta_2], " ∼ (Anihilation)")
+    print(l[K + nr_factor_comun + 6 + nr_idempotenta_2 + tautologie])
+else:
+    print(l[K + nr_factor_comun + 6 + nr_idempotenta_2])
 
 print(
     "Simplified logical expressions (not necessarily the shortest form) : ",
-    l[K + nr_factor_comun + 6 + nr_idempotenta_2],
+    l[K + nr_factor_comun + 6 + nr_idempotenta_2 + tautologie],
 )
 
 print()
