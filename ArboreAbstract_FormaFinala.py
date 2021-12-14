@@ -262,7 +262,7 @@ def val(s, l, r):
     ):
         return 1 - (1 - (s[r - 1] == "0"))
 
-    if s[l + 1] == "¬":
+    if s[l + 1] == "(¬)":
         return 1 - val(s, l + 2, r - 1)
 
     now = 0
@@ -444,7 +444,7 @@ for i in range(len(s)):
         a.display()
 
     elif s[i] == ")":
-        if now.key >= "A" and now.key <= "Z":
+        if (now.key >= "A" and now.key <= "Z") or now.key == "„□”":
             print("Nu se astepta o paranteza inchisa")
             print("Nu este propozitie bine formata")
             exit()
