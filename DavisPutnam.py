@@ -834,12 +834,30 @@ def elimina(x, l):
 
 
 def DavisPutnam(l):
+    d = dict()
     for X in l:
         x = X.split(",")
 
         if len(x) == 1:
             return elimina(x[0], l)
-    return l
+        for it in x:
+            d[it] = 1
+
+    nou = []
+    for X in l:
+        x = X.split(",")
+        gasit = 0
+        for it in x:
+            if len(it) == 2:
+                if d.get(it[1]) == None:
+                    gasit = 1
+            elif d.get("¬" + it) == None:
+                gasit = 1
+        if gasit:
+            continue
+        nou.append(",".join(x))
+
+    return nou
 
 
 contradictie = 0
@@ -900,3 +918,4 @@ while 1:
         exit()
 
 print("Formula este satisfiabila")
+
