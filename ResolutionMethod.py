@@ -202,308 +202,6 @@ def strict_structure(s):
     return s
 
 
-def val(s, l, r):
-
-    if l == r:
-        return 1 - (1 - (s[l] == "1"))
-
-    if (
-        (s[l + 1] == "¬")
-        and (s[r - 1] >= "A")
-        and (s[r - 1] <= "Z")
-        and (r - l + 1 == 4)
-    ):
-        return 1 - (1 - (s[r - 1] == "0"))
-
-    if s[l + 1] == "¬":
-        return 1 - val(s, l + 2, r - 1)
-
-    now = 0
-    for i in range(l + 1, r):
-        if s[i] == "(":
-            now += 1
-        if s[i] == ")":
-            now -= 1
-        if s[i] == "⇒" and now == 0:
-            return (1 - val(s, l + 1, i - 1)) or val(s, i + 1, r - 1)
-        if s[i] == "⇔" and now == 0:
-            return val(s, l + 1, i - 1) == val(s, i + 1, r - 1)
-        if s[i] == "∨" and now == 0:
-            return val(s, l + 1, i - 1) or val(s, i + 1, r - 1)
-        if s[i] == "∧" and now == 0:
-            return val(s, l + 1, i - 1) and val(s, i + 1, r - 1)
-    return 0
-
-
-print("Insert expression : ", end="")
-s = input()
-s = s.split()
-s = "".join(s)
-s = strict_structure(s)
-
-ans = da(s, 0, len(s) - 1)
-if not ans:
-    print("Nu este formula propozitionala bine formata")
-    exit()
-
-litere = set()
-d = dict()
-for it in s:
-    if it >= "A" and it <= "Z":
-        litere.add(it)
-        d[it] = 0
-cnt = len(litere)
-litere = list(litere)
-litere.sort()
-
-clauze = []
-
-# printing the letters
-print("", end=" | ")
-for it in litere:
-    print(it, end=" | ")
-print(s)
-# generating the truth table
-for i in range(2 ** cnt):
-    cur = ""
-    for j in range(cnt):
-        if ((2 ** j) & i) != 0:
-            cur += "1"
-        else:
-            cur += "0"
-    cur = cur[::-1]
-
-    x = 0
-    formula = []
-    for it in litere:
-        if cur[x] == "0":
-            formula.append(it)
-        else:
-            formula.append("¬" + it)
-        d[it] = cur[x]
-        x += 1
-
-    g = ""
-    for it in s:
-        if it >= "A" and it <= "Z":
-            g += d[it]
-        else:
-            g += it
-        # printing the line in the truth table
-    print("", end=" | ")
-    for it in cur:
-        print(it, end=" | ")
-    nw = val(g, 0, len(g) - 1)
-
-    if not nw:
-        clauze.append(",".join(formula))
-    print(nw)
-
-
-def da(s, l, r):
-
-    if l == r:
-        if s[l] >= "A" and s[l] <= "Z":
-            return 1
-        return 0
-
-    if s[l] != "(" or s[r] != ")":
-        return 0
-
-    if (
-        (s[l + 1] == "¬")
-        and (s[r - 1] >= "A")
-        and (s[r - 1] <= "Z")
-        and (r - l + 1 == 4)
-    ):
-        return 1
-
-    if s[l + 1] == "¬":
-        return da(s, l + 2, r - 1)
-
-    now = 0
-    for i in range(l + 1, r):
-        if s[i] == "(":
-            now += 1
-        if s[i] == ")":
-            now -= 1
-        if (s[i] == "⇒" or s[i] == "⇔" or s[i] == "∨" or s[i] == "∧") and now == 0:
-            return da(s, l + 1, i - 1) and da(s, i + 1, r - 1)
-    return 0
-
-
-def strict_structure(s):
-
-    # propozitie atomica
-    if len(s) == 1 and s[0] >= "A" and s[0] <= "Z":
-        return s
-
-    # initializare
-    open = 0
-    closed = 0
-    x = 0
-    good = 1
-    st = 0
-    dr = len(s) - 1
-    for i in range(len(s)):
-        it = s[i]
-        if it == "(":
-            x += 1
-        if it == ")":
-            x -= 1
-        if x == 0 and i > 0 and i < len(s) - 1:
-            good = 0
-    if s[dr] == ")" and s[st] == "(" and good:
-        st += 1
-        dr -= 1
-    cur = ""  # componenta
-
-    # equivalence
-    l = []
-    while st <= dr:
-        i = st
-        if s[i] == ")":
-            closed += 1
-        if s[i] == "(":
-            open += 1
-        if (s[i] == "⇔") and (open == closed):
-            l.append(cur)
-            cur = ""
-        else:
-            cur += s[i]
-        st += 1
-
-    ans = ""
-    if len(l) != 0:
-        for i in range(len(l)):
-            ans += ")"
-
-        ans = strict_structure(cur) + ans
-
-        l.reverse()  # stored components
-
-        for i in range(len(l)):
-            ans = "(" + strict_structure(l[i]) + "⇔" + ans
-
-        return ans
-
-    # initializare
-    open = 0
-    closed = 0
-    x = 0
-    good = 1
-    st = 0
-    dr = len(s) - 1
-    for i in range(len(s)):
-        it = s[i]
-        if it == "(":
-            x += 1
-        if it == ")":
-            x -= 1
-        if x == 0 and i > 0 and i < len(s) - 1:
-            good = 0
-    if s[dr] == ")" and s[st] == "(" and good:
-        st += 1
-        dr -= 1
-    cur = ""  # componenta
-
-    # implication
-    l = []
-    while st <= dr:
-        i = st
-        if s[i] == ")":
-            closed += 1
-        if s[i] == "(":
-            open += 1
-        if (s[i] == "⇒") and (open == closed):
-            l.append(cur)
-            cur = ""
-        else:
-            cur += s[i]
-        st += 1
-
-    ans = ""
-    if len(l) != 0:
-        for i in range(len(l)):
-            ans += ")"
-
-        ans = strict_structure(cur) + ans
-
-        l.reverse()  # stored components
-
-        for i in range(len(l)):
-            ans = "(" + strict_structure(l[i]) + "⇒" + ans
-
-        return ans
-
-    # initializare
-    open = 0
-    closed = 0
-    x = 0
-    good = 1
-    st = 0
-    dr = len(s) - 1
-    for i in range(len(s)):
-        it = s[i]
-        if it == "(":
-            x += 1
-        if it == ")":
-            x -= 1
-        if x == 0 and i > 0 and i < len(s) - 1:
-            good = 0
-    if s[dr] == ")" and s[st] == "(" and good:
-        st += 1
-        dr -= 1
-    cur = ""  # componenta
-
-    # or and and
-    l = []
-    l1 = []
-    while st <= dr:
-        i = st
-        if s[i] == ")":
-            closed += 1
-        if s[i] == "(":
-            open += 1
-        if (s[i] == "∨" or s[i] == "∧") and (open == closed):
-            l1.append(s[i])
-            l.append(cur)
-            cur = ""
-        else:
-            cur += s[i]
-        st += 1
-
-    ans = ""
-    if len(l) != 0:
-        for i in range(len(l)):
-            ans += ")"
-
-        ans = strict_structure(cur) + ans
-
-        l.reverse()  # stored components
-        l1.reverse()  # stored binary operators
-
-        for i in range(len(l)):
-            ans = "(" + strict_structure(l[i]) + l1[i] + ans
-
-        return ans
-    # negatie
-    if s[0] == "¬":
-        ans = ""
-        for i in range(1, len(s)):
-            ans += s[i]
-        return "(¬" + strict_structure(ans) + ")"
-
-    # negatie cu paranteze
-    if s[0] == "(" and s[1] == "¬" and s[len(s) - 1] == ")":
-        ans = ""
-        for i in range(2, len(s) - 1):
-            ans += s[i]
-        return "(¬" + strict_structure(ans) + ")"
-
-    return s
-
-
 def echiv(s, negatie):
 
     if len(s) == 1:
@@ -1033,6 +731,21 @@ print()
 print()
 print()
 # print(l)
+
+print("F = ", l[0], " ∼ (Definition of equivalence)")
+print(l[1], " ∼ (Definition of implication)")
+
+for i in range(K):
+    print(l[2 + i], " ∼ (Distributivity of disjuction over conjunction)")
+
+print(l[K + 2], " ∼ (Relaxed syntax)")
+print(l[K + 3])
+
+
+print()
+print()
+print()
+
 print("F = ", s)
 
 ################################################################
@@ -1047,15 +760,26 @@ def good(a):
 
 clauze = []
 
+# print("s = ", s)
+
 lst = s.split("∧")
 for it in lst:
     if len(it) <= 2:
-        clauze.append(",".join(it.split("∨")))
+        x = it[0 : len(it)]
+        x = x.split("∨")
+        x.sort()
+        new_clauza = ",".join(x)
+        if good(new_clauza):
+            clauze.append(new_clauza)
     else:
         x = it[1 : len(it) - 1]
-        clauze.append(",".join(x.split("∨")))
+        x = x.split("∨")
+        x.sort()
+        new_clauza = ",".join(x)
+        if good(new_clauza):
+            clauze.append(new_clauza)
 
-
+clauze = list(set(clauze))
 print("Clauze = ", clauze)
 
 if len(clauze) == 0:
@@ -1147,3 +871,5 @@ while 1:
     if contradictie:
         print("F = ⊥")
         exit()
+
+print("F este satisfiabila")
