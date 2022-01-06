@@ -748,11 +748,42 @@ clauze = []
 lst = s.split("∧")
 for it in lst:
     if len(it) <= 2:
-        clauze.append(",".join(it.split("∨")))
+        x = it[0 : len(it)]
+        x = x.split("∨")
+        x.sort()
+        new_clauza = ",".join(x)
+        if good(new_clauza):
+            clauze.append(new_clauza)
     else:
         x = it[1 : len(it) - 1]
-        clauze.append(",".join(x.split("∨")))
+        x = x.split("∨")
+        x.sort()
+        new_clauza = ",".join(x)
+        if good(new_clauza):
+            clauze.append(new_clauza)
 
+clauze = list(set(clauze))
+
+print()
+print()
+print()
+# print(l)
+
+print("F = ", l[0], " ∼ (Definition of equivalence)")
+print(l[1], " ∼ (Definition of implication)")
+
+for i in range(K):
+    print(l[2 + i], " ∼ (Distributivity of disjuction over conjunction)")
+
+print(l[K + 2], " ∼ (Relaxed syntax)")
+print(l[K + 3])
+
+
+print()
+print()
+print()
+
+print("F = ", s)
 
 print("Clauze = ", clauze)
 
@@ -868,7 +899,7 @@ while 1:
     if clauze_noi != clauze:
         if len(clauze_noi) == 0:
             print("[]")
-            print("Formula este nesatisfiabila")
+            print("Formula este satisfiabila")
             exit()
 
         clauze = []
@@ -918,4 +949,3 @@ while 1:
         exit()
 
 print("Formula este satisfiabila")
-
