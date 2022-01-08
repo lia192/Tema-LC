@@ -32,11 +32,11 @@ def da(s, l, r):
 
 def strict_structure(s):
 
-    # propozitie atomica
+    # atomic formula
     if len(s) == 1 and s[0] >= "A" and s[0] <= "Z":
         return s
 
-    # initializare
+    # initialization
     open = 0
     closed = 0
     x = 0
@@ -54,7 +54,7 @@ def strict_structure(s):
     if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
-    cur = ""  # componenta
+    cur = ""  # component
 
     # equivalence
     l = []
@@ -85,7 +85,7 @@ def strict_structure(s):
 
         return ans
 
-    # initializare
+    # initialization
     open = 0
     closed = 0
     x = 0
@@ -103,7 +103,7 @@ def strict_structure(s):
     if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
-    cur = ""  # componenta
+    cur = ""  # component
 
     # implication
     l = []
@@ -134,7 +134,7 @@ def strict_structure(s):
 
         return ans
 
-    # initializare
+    # initialization
     open = 0
     closed = 0
     x = 0
@@ -152,7 +152,7 @@ def strict_structure(s):
     if s[dr] == ")" and s[st] == "(" and good:
         st += 1
         dr -= 1
-    cur = ""  # componenta
+    cur = ""  # component
 
     # or and and
     l = []
@@ -185,14 +185,14 @@ def strict_structure(s):
             ans = "(" + strict_structure(l[i]) + l1[i] + ans
 
         return ans
-    # negatie
+    # negation
     if s[0] == "¬":
         ans = ""
         for i in range(1, len(s)):
             ans += s[i]
         return "(¬" + strict_structure(ans) + ")"
 
-    # negatie cu paranteze
+    # negation with parenthesis
     if s[0] == "(" and s[1] == "¬" and s[len(s) - 1] == ")":
         ans = ""
         for i in range(2, len(s) - 1):
@@ -357,15 +357,13 @@ def implicatie(s, negatie):
 
 def distribuie(s):
 
-    # print("callh ", s)
-
     if len(s) == 1:
         return s
 
     if (s[1] == "¬") and (s[2] >= "A") and (s[2] <= "Z") and (len(s) == 4):
         return s
 
-    #########
+    ################
     now = 0
     l = 0
     r = len(s) - 1
@@ -395,7 +393,7 @@ def distribuie(s):
             if it == "(" or it == ")":
                 continue
             ans += it
-        return s  # "(" + ans + ")"
+        return s 
     ############
 
     now = 0
@@ -543,10 +541,6 @@ def idempotenta(s):
 
     return s[l:r]
 
-
-# b = rec(s, 0, len(s) - 1)
-# b.display()
-
 s = "(¬(F ⇔ G) ∨ ¬(G ⇒ H)) ∧ (G ∧ ¬H)"
 print("Insert expression : ", end="")
 s = input()
@@ -585,7 +579,7 @@ l.append(s)
 s = idempotenta(s)
 l.append(s)
 
-##idempotenta
+##idempotency
 componente = s.split("∧")
 lst = []
 
@@ -600,13 +594,6 @@ if len(lst) == 0:
     lst.append("T")
 l.append("(" + ")∧(".join(lst) + ")")
 s = l[len(l) - 1]
-
-#####
-# letter = set()
-# for it in "∨".join(componente):
-# if it >= "A" and it <= "Z":
-# letter.add(it)
-# letter = list(letter)
 
 
 def binary(s):
