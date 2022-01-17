@@ -29,3 +29,9 @@ Logical Expressions
      -chekcs whether the inserted logical expression is valid
      -converts the logical expression to CNF
      -checks its satisfiability using the Resolution Method with David Putnam's optimisation
+     
+    DPLL.py:
+     -converts the logical expression from relaxed syntax to strict syntax
+     -chekcs whether the inserted logical expression is valid
+     -converts the logical expression to CNF
+     -checks its satisfiability using DPLL
